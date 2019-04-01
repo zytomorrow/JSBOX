@@ -59,13 +59,13 @@ $ui.render({
 function getAllComics(page = 1, allpage = -1) {
   if (page != allpage + 1) {
     $http.get({
-      url: "https://prod-api.ishuhui.com/comics/list",
-      body: {
-        "pageSize": "24",
-        "toView": "true",
-        ".json": "",
-        "page": `${page}`,
-      },
+      url: `https://prod-api.ishuhui.com/ver/82383992/comics/list/?page=2&pageSize=${page}&toView=true`,
+      // body: {
+      //   "pageSize": "24",
+      //   "toView": "true",
+      //   ".json": "",
+      //   "page": `${page}`,
+      // },
       handler: function (resp) {
         page += 1;
         allpage = resp.data.data.totalPages
