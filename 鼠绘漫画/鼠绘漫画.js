@@ -56,34 +56,39 @@ $ui.render({
 // 主界面相关
 // ====================================================================
 // 页数不多，采用递归获取所有资源
-function getAllComics(page = 1, allpage = -1) {
-  if (page != allpage + 1) {
+function getAllComics(page=1, allpage=-1, alldata=[]) {;
+  if (page == allpage + 1) {
+    renderIndex(alldata[0]);
+    return;
+  }else {
     $http.get({
-      url: `https://prod-api.ishuhui.com/ver/82383992/comics/list/?page=2&pageSize=${page}&toView=true`,
-      // body: {
-      //   "pageSize": "24",
-      //   "toView": "true",
-      //   ".json": "",
-      //   "page": `${page}`,
-      // },
+      url: `https://prod-api.ishuhui.com/ver/d1472853/comics/list?pageSize=24&toView=true&.json&page=${page}`,
       handler: function (resp) {
-        page += 1;
-        allpage = resp.data.data.totalPages
-        renderIndex(resp.data.data.data)
-        return getAllComics(page = page, allpage = allpage);
+        $console.info(page);
+        $console.info(resp.data.data.data);
+        page ++;
+        allpage = resp.data.data.totalPages;
+        alldata.push(resp.data.data.data);
+        return getAllComics(page = page, allpage = allpage, alldata=alldata);
       }
-    })
+    });
   }
 }
+
+
+
+
+
 // 渲染主界面
 function renderIndex(items) {
   $("index").data = items.map(item => {
     return {
       label: {
-        text: $text.HTMLUnescape(item.animeName)
+        // text: $text.HTMLUnescape(item.animeName)
+        text: $text.HTMLUnescape(item.title)
       },
       image: {
-        src: item.animeThumb
+        src: item.thumb
       },
       animeID: item.animeID
     }
@@ -118,7 +123,7 @@ function showAllEpisode(id) {
       // 对分组进行升序排列
       temp = [];  // 暂存所有的章节
       EpisodeID = 1  // 序号索引，因为自带的ID属性有问题
-      rawEpisodeGroup = Object.keys(items).sort()  // EpisodeGroup的Key值
+      rawEpisodeGroup = Object.keys(items).sort(); // EpisodeGroup的Key值
       // 重新建立键值对对应关系
       orderEpisodeGroup = {};  // 暂存修改了Key的EpisodeGroup
       indexEpisodeGroup = 0;   // EpisodeGroup的key值
@@ -217,7 +222,7 @@ function episodePage(id) {
 // ==========================================================
 // 获取某个漫画下的所有图片地址
 function getAllPic(detailID) {
-  $console.info(detailID);
+  // $console.info(detailID);
   $http.get({
     url: `https://prod-api.ishuhui.com/comics/detail?id=${detailID}`,
     handler: function(resp) {
