@@ -58,17 +58,21 @@ $ui.render({
 // 页数不多，采用递归获取所有资源
 function getAllComics(page=1, allpage=-1, alldata=[]) {;
   if (page == allpage + 1) {
-    renderIndex(alldata[0]);
+
+    // $console.info(alldata);
+    renderIndex(alldata);
     return;
-  }else {
+  } else {
     $http.get({
       url: `https://prod-api.ishuhui.com/ver/d1472853/comics/list?pageSize=24&toView=true&.json&page=${page}`,
       handler: function (resp) {
-        $console.info(page);
-        $console.info(resp.data.data.data);
+        // $console.info(page);
+        // $console.info(resp.data.data.data);
         page ++;
         allpage = resp.data.data.totalPages;
-        alldata.push(resp.data.data.data);
+        for (var i = 0; i < resp.data.data.data.length; i++){
+          alldata.push(resp.data.data.data[i]);
+        }
         return getAllComics(page = page, allpage = allpage, alldata=alldata);
       }
     });
